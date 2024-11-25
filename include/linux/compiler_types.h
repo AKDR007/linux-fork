@@ -266,6 +266,12 @@ struct ftrace_likely_data {
 #define noinline_for_stack noinline
 
 /*
+ * Use noinline_for_tracing for functions that should not be inlined.
+ * For tracing reasons.
+ */
+#define noinline_for_tracing noinline
+
+/*
  * Sanitizer helper attributes: Because using __always_inline and
  * __no_sanitize_* conflict, provide helper attributes that will either expand
  * to __no_sanitize_* in compilation units where instrumentation is enabled
@@ -419,6 +425,13 @@ struct ftrace_likely_data {
 #else
 #define __struct_size(p)	__builtin_object_size(p, 0)
 #define __member_size(p)	__builtin_object_size(p, 1)
+#endif
+
+/* Determine if an attribute has been applied to a variable. */
+#if __has_builtin(__builtin_has_attribute)
+#define __annotated(var, attr)	__builtin_has_attribute(var, attr)
+#else
+#define __annotated(var, attr)	(false)
 #endif
 
 /*
